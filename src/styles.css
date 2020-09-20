@@ -1,1 +1,57 @@
 /* You can add global styles to this file, and also import other style files */
+html, body{
+    height: 100%;
+  }
+*, *::after, *::before {
+    -webkit-user-select: none;
+    -webkit-user-drag: none;
+    -webkit-app-region: no-drag;
+    cursor: default;
+}
+#root, #root > div, #page, #page > div{
+    height: 100%;
+}
+#root > div{
+    display: flex;
+    flex-direction: column;
+}
+
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+        sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+*, *::before, *::after{
+    box-sizing: border-box;
+}
+code {
+font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+app-root{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+app-home{
+    height: 100%;
+}
+
+html, body { height: 100%; }
+
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+
+.mat-accent .mat-slider-track-fill, .mat-accent .mat-slider-thumb, .mat-accent .mat-slider-thumb-label{
+    background-color: #ccc;
+}
+
+.mat-slider-min-value:not(.mat-slider-thumb-label-showing) .mat-slider-thumb{
+    background-color: #ddd;
+}
+.mat-slider-horizontal .mat-slider-wrapper{
+    background-color: #ddd;
+}

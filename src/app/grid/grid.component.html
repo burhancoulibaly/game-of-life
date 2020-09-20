@@ -1,0 +1,9 @@
+<div id="grid-container" #gridContainer>
+    <section id="grid" #gridElement>
+        <div *ngFor="let row of grid" class="row">
+            <div *ngFor="let col of row" class="cols">
+                <app-square [square]="col" (activationStateChange)="handleActivationStateChange($event)"></app-square>
+            </div>
+        </div>
+    </section>
+</div>

@@ -1,0 +1,9 @@
+<div id="sandbox">
+    <app-grid 
+        [runState]="runState" 
+        [pauseState]="pauseState" 
+        [clearState]="clearState"
+        [speedState]="speedState"
+    ></app-grid>
+    <app-menu (runStateChange)="handleRunStateChange($event)" (pauseStateChange)="handlePauseStateChange($event)" (clearStateChange)="handleClearStateChange($event)" (speedStateChange)="handleSpeedStateChange($event)"></app-menu>
+</div>

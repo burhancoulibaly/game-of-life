@@ -1,0 +1,13 @@
+<div id="menu-container">
+    <section class="menu">
+        <div class="menu-btns">
+            <button (click)="runStateChanged($event)" class="btn btn-primary">Run</button>
+            <button (click)="pauseStateChanged($event)" class="btn btn-primary">Pause</button>
+            <button (click)="clearStateChanged($event)" class="btn btn-primary">Clear</button>
+        </div>
+        <div class="speed-slider">
+            <label for="speed">Speed</label>
+            <mat-slider id="speed" min="1" max="5" step="1" value="3" (change)="speedStateChanged($event)"></mat-slider>
+        </div>
+    </section>
+</div>

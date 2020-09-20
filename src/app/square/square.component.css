@@ -1,0 +1,7 @@
+.square{
+    border: 1px solid black;
+    background-color: white;
+}
+.square.activated{
+    background-color: #7cdedc;
+}

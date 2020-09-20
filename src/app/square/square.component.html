@@ -1,0 +1,3 @@
+<div *ngIf="square" [ngClass]="{'activated' : square.isActivated}" [ngStyle]="{'width.px': square.width, 'height.px': square.height}" class="square" (mousedown)="handler($event)" (mouseup)="handler($event)" (mouseover)="handler($event)">
+    
+</div>
