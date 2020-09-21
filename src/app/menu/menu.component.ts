@@ -1,4 +1,5 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 import { Menu } from '../menu';
 
 
@@ -14,11 +15,12 @@ export class MenuComponent implements OnInit {
     cleared: true,
     speed: 0,
   }
-
+  
+  @Input() gridCleared: BehaviorSubject<boolean>;
   @Output() runStateChange: EventEmitter<boolean> = new EventEmitter();
   @Output() pauseStateChange: EventEmitter<boolean> = new EventEmitter();
   @Output() clearStateChange: EventEmitter<boolean> = new EventEmitter();
-  @Output() speedStateChange: EventEmitter<number> = new EventEmitter()
+  @Output() speedStateChange: EventEmitter<number> = new EventEmitter();
 
   constructor(private elementRef: ElementRef) { }
 
@@ -27,6 +29,13 @@ export class MenuComponent implements OnInit {
     this.pauseStateChange.emit(this.menuState.paused);
     this.clearStateChange.emit(this.menuState.cleared);
     this.speedStateChange.emit(this.menuState.speed);
+
+    this.gridCleared
+      .subscribe((clearState) => {
+        console.log("Grid cleared", clearState);
+        
+        this.menuState.cleared = clearState;
+      });
   }
 
   ngAfterViewInit(): void {
@@ -35,17 +44,27 @@ export class MenuComponent implements OnInit {
   }
 
   runStateChanged(e){
-    this.menuState.running = !this.menuState.running
+    this.menuState.running = true;
+    this.menuState.paused = false;
     this.runStateChange.emit(this.menuState.running);
+    this.pauseStateChange.emit(this.menuState.paused);
   }
 
   pauseStateChanged(e){
-    this.menuState.paused = !this.menuState.paused
-    this.pauseStateChange.emit(this.menuState.paused);
+    if(this.menuState.running){
+      this.menuState.running = false;
+      this.menuState.paused = true;
+      this.runStateChange.emit(this.menuState.running);
+      this.pauseStateChange.emit(this.menuState.paused);      
+    }
   }
   
   clearStateChanged(e){
-    this.menuState.cleared = !this.menuState.cleared;
+    this.menuState.running = false;
+    this.menuState.paused = false;
+    this.menuState.cleared = false;
+    this.runStateChange.emit(this.menuState.running);
+    this.pauseStateChange.emit(this.menuState.paused);
     this.clearStateChange.emit(this.menuState.cleared);
   }
 

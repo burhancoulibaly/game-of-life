@@ -10,6 +10,8 @@
     /* border: 3px solid black; */
     width: 20%;
     height: 60%;
+    min-width: 225px;
+    min-height: 170px;
     background-color: white;
     border-radius: 15px;
     display: flex;

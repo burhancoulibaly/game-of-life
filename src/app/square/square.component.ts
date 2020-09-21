@@ -13,6 +13,7 @@ let prevPoint: any = {
   styleUrls: ['./square.component.css']
 })
 export class SquareComponent implements OnInit {
+  @Input() isRunning: boolean;
   @Input() square: Square;
   @Output() activationStateChange: EventEmitter<any> = new EventEmitter();
   
@@ -28,32 +29,36 @@ export class SquareComponent implements OnInit {
   }
 
   handler(e){
-    if(e.type === "mousedown"){
-      prevPoint.x = this.square.x;
-      prevPoint.y = this.square.y;
-
-      this.triggerActivationStateChange();
-
-      return isMouseDown = true;
-    }
-
-    if(e.type === "mouseover" && isMouseDown){
-      if(prevPoint.x !== this.square.x || prevPoint.y !== this.square.y){
+    if(!this.isRunning){
+      if(e.type === "mousedown"){
         prevPoint.x = this.square.x;
         prevPoint.y = this.square.y;
-
-        return this.triggerActivationStateChange();
+  
+        this.triggerActivationStateChange();
+  
+        return isMouseDown = true;
+      }
+  
+      if(e.type === "mouseover" && isMouseDown){
+        if(prevPoint.x !== this.square.x || prevPoint.y !== this.square.y){
+          prevPoint.x = this.square.x;
+          prevPoint.y = this.square.y;
+  
+          return this.triggerActivationStateChange();
+        }
+      }
+  
+      if(e.type === "mouseup"){
+        if(isMouseDown){
+          return isMouseDown = false;
+        }
       }
     }
-
-    if(e.type === "mouseup"){
-      if(isMouseDown){
-        return isMouseDown = false;
-      }
-    }
+    
+    return;
   }
 
   triggerActivationStateChange(){
-    this.activationStateChange.emit({...this.square, isActivated: !this.square.isActivated, x: this.square.x, y: this.square.y});
+    this.activationStateChange.emit({...this.square, isActive: !this.square.isActive, x: this.square.x, y: this.square.y});
   }
 }

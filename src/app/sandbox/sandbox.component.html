@@ -4,6 +4,13 @@
         [pauseState]="pauseState" 
         [clearState]="clearState"
         [speedState]="speedState"
+        (gridCleared)="handleGridCleared($event)"
     ></app-grid>
-    <app-menu (runStateChange)="handleRunStateChange($event)" (pauseStateChange)="handlePauseStateChange($event)" (clearStateChange)="handleClearStateChange($event)" (speedStateChange)="handleSpeedStateChange($event)"></app-menu>
+    <app-menu
+        [gridCleared]="clearState"
+        (runStateChange)="handleRunStateChange($event)" 
+        (pauseStateChange)="handlePauseStateChange($event)" 
+        (clearStateChange)="handleClearStateChange($event)" 
+        (speedStateChange)="handleSpeedStateChange($event)"
+    ></app-menu>
 </div>

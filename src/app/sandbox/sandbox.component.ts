@@ -45,6 +45,11 @@ export class SandboxComponent implements OnInit {
     this.speedStateChanged();
   }
 
+  handleGridCleared(clearState){
+    this.menuState.cleared = clearState;
+    this.clearStateChanged();
+  }
+
   runStateChanged(){
     this.runState.next(this.menuState.running);
     return; 

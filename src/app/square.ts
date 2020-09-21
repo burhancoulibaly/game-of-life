@@ -3,5 +3,5 @@ export interface Square {
     height: number,
     x: number,
     y: number,
-    isActivated: boolean
+    isActive: boolean
 }
