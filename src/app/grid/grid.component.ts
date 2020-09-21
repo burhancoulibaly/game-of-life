@@ -1,5 +1,5 @@
 import { AfterViewChecked, ChangeDetectorRef, Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { BehaviorSubject, timer } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription, timer } from 'rxjs';
 import { GridDims } from '../grid-dims';
 import { Menu } from '../menu';
 import { Square } from '../square';
@@ -70,6 +70,7 @@ export class GridComponent implements OnInit, AfterViewChecked {
   @Output() gridCleared: EventEmitter<boolean> = new EventEmitter();
 
   private subscriptions: Array<any> = new Array();
+  private speedSubscription: Subscription;
   public menuState: Menu = {
     running: null,
     paused: null,
@@ -96,6 +97,10 @@ export class GridComponent implements OnInit, AfterViewChecked {
         // console.log("running", runState);
 
         this.menuState.running = runState;
+
+        if(this.speedSubscription){
+          this.speedSubscription.unsubscribe();
+        }
 
         this.runAlgorithm();
       });
@@ -130,6 +135,10 @@ export class GridComponent implements OnInit, AfterViewChecked {
         
         this.menuState.speed = speedState;
 
+        if(this.speedSubscription){
+          this.speedSubscription.unsubscribe();
+        }
+        
         this.runAlgorithm();
       });
     this.subscriptions.push(this.speedState);
@@ -232,6 +241,7 @@ export class GridComponent implements OnInit, AfterViewChecked {
       }
     });
     this.subscriptions.push(subscribe);
+    this.speedSubscription = subscribe;
   }
 }
 
