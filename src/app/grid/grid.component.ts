@@ -58,9 +58,9 @@ export class GridComponent implements OnInit, AfterViewChecked {
       })
     );
         
-    console.log("Grid Dims: ", this.gridDims);
-    console.log("Square Dims", this.squareDims);
-    console.log("Grid: ", this.grid );
+    // console.log("Grid Dims: ", this.gridDims);
+    // console.log("Square Dims", this.squareDims);
+    // console.log("Grid: ", this.grid );
   }
   @ViewChild('gridElement') gridElement: ElementRef;
   @Input() runState: BehaviorSubject<boolean>;
@@ -92,7 +92,7 @@ export class GridComponent implements OnInit, AfterViewChecked {
   ngOnInit(): void {
     this.runState
       .subscribe((runState) => {
-        console.log("running", runState);
+        // console.log("running", runState);
 
         this.menuState.running = runState;
 
@@ -101,14 +101,14 @@ export class GridComponent implements OnInit, AfterViewChecked {
 
     this.pauseState
       .subscribe((pauseState) => {
-        console.log("paused", pauseState);
+        // console.log("paused", pauseState);
         
         this.menuState.paused = pauseState;
       });
     
     this.clearState
       .subscribe((clearState) => {
-        console.log("cleared", clearState);
+        // console.log("cleared", clearState);
         
         this.menuState.cleared = clearState;
 
@@ -122,7 +122,7 @@ export class GridComponent implements OnInit, AfterViewChecked {
 
     this.speedState
       .subscribe((speedState) => {
-        console.log("speed", speedState);
+        // console.log("speed", speedState);
         
         this.menuState.speed = speedState;
 
@@ -163,9 +163,9 @@ export class GridComponent implements OnInit, AfterViewChecked {
         })
       )
 
-    console.log("Grid Dims: ", this.gridDims);
-    console.log("Square Dims", this.squareDims);
-    console.log("Grid: ", this.grid );
+    // console.log("Grid Dims: ", this.gridDims);
+    // console.log("Square Dims", this.squareDims);
+    // console.log("Grid: ", this.grid );
   }
 
   ngAfterViewChecked() {
@@ -177,7 +177,7 @@ export class GridComponent implements OnInit, AfterViewChecked {
   }
 
   runAlgorithm(){
-    console.log(500 / this.menuState.speed)
+    // console.log(500 / this.menuState.speed)
     const repeat = timer(0 / this.menuState.speed, 500 / this.menuState.speed);
 
     const subscribe = repeat.subscribe(() => {

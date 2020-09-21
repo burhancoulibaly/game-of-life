@@ -32,7 +32,7 @@ export class MenuComponent implements OnInit {
 
     this.gridCleared
       .subscribe((clearState) => {
-        console.log("Grid cleared", clearState);
+        // console.log("Grid cleared", clearState);
         
         this.menuState.cleared = clearState;
       });
