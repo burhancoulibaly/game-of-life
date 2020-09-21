@@ -196,7 +196,7 @@ export class GridComponent implements OnInit, AfterViewChecked {
 
   runAlgorithm(){
     // console.log(500 / this.menuState.speed)
-    const repeat = timer(0 / this.menuState.speed, 500 / this.menuState.speed);
+    const repeat = timer(0 / this.menuState.speed, 250 / this.menuState.speed);
 
     const subscribe = repeat.subscribe(() => {
       if(this.menuState.running && !this.menuState.paused){
