@@ -1,5 +1,6 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { NavigationStart, Router } from '@angular/router';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { Menu } from '../menu';
 
 
@@ -22,9 +23,31 @@ export class MenuComponent implements OnInit {
   @Output() clearStateChange: EventEmitter<boolean> = new EventEmitter();
   @Output() speedStateChange: EventEmitter<number> = new EventEmitter();
 
-  private subscriptions: Array<any> = new Array();
+  private subscriptions: Array<BehaviorSubject<any> | Subscription> = new Array();
 
-  constructor(private elementRef: ElementRef) { }
+  constructor(private elementRef: ElementRef, private router: Router) { 
+    const subscription = router.events.subscribe((event) => {
+      if (event instanceof NavigationStart) {
+        const browserRefresh = !router.navigated;
+
+        if(browserRefresh){
+          this.menuState = {
+            ...this.menuState,
+            running: false,
+            paused: false,
+            cleared: true
+          }
+          
+          this.runStateChange.emit(this.menuState.running);
+          this.pauseStateChange.emit(this.menuState.paused);
+          this.clearStateChange.emit(this.menuState.cleared);
+          this.speedStateChange.emit(this.menuState.speed);
+        }
+      }
+    });
+
+    this.subscriptions.push(subscription);
+  }
 
   ngOnInit(): void {
     this.runStateChange.emit(this.menuState.running);

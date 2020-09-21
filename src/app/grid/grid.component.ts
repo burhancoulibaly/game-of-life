@@ -69,7 +69,7 @@ export class GridComponent implements OnInit, AfterViewChecked {
   @Input() speedState: BehaviorSubject<number>;
   @Output() gridCleared: EventEmitter<boolean> = new EventEmitter();
 
-  private subscriptions: Array<any> = new Array();
+  private subscriptions: Array<BehaviorSubject<any> | Subscription> = new Array();
   private speedSubscription: Subscription;
   public menuState: Menu = {
     running: null,
@@ -138,7 +138,7 @@ export class GridComponent implements OnInit, AfterViewChecked {
         if(this.speedSubscription){
           this.speedSubscription.unsubscribe();
         }
-        
+
         this.runAlgorithm();
       });
     this.subscriptions.push(this.speedState);
