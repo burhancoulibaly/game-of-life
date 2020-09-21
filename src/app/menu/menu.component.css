@@ -10,8 +10,8 @@
     /* border: 3px solid black; */
     width: 20%;
     height: 60%;
-    min-width: 225px;
-    min-height: 170px;
+    min-width: 230px;
+    min-height: 175px;
     background-color: white;
     border-radius: 15px;
     display: flex;
@@ -24,6 +24,9 @@
     display: flex;
     justify-content: space-evenly;
     align-items: center;
+}
+#menu-container .menu .menu-btns button.disabled{
+    pointer-events: none;
 }
 #menu-container .menu .speed-slider{
     width: 100%;

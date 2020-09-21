@@ -69,6 +69,7 @@ export class GridComponent implements OnInit, AfterViewChecked {
   @Input() speedState: BehaviorSubject<number>;
   @Output() gridCleared: EventEmitter<boolean> = new EventEmitter();
 
+  private subscriptions: Array<any> = new Array();
   public menuState: Menu = {
     running: null,
     paused: null,
@@ -98,6 +99,7 @@ export class GridComponent implements OnInit, AfterViewChecked {
 
         this.runAlgorithm();
       });
+    this.subscriptions.push(this.runState);
 
     this.pauseState
       .subscribe((pauseState) => {
@@ -105,6 +107,7 @@ export class GridComponent implements OnInit, AfterViewChecked {
         
         this.menuState.paused = pauseState;
       });
+    this.subscriptions.push(this.pauseState);
     
     this.clearState
       .subscribe((clearState) => {
@@ -119,6 +122,7 @@ export class GridComponent implements OnInit, AfterViewChecked {
           this.gridCleared.emit(this.menuState.cleared);
         }
       });
+    this.subscriptions.push(this.clearState);
 
     this.speedState
       .subscribe((speedState) => {
@@ -128,6 +132,7 @@ export class GridComponent implements OnInit, AfterViewChecked {
 
         this.runAlgorithm();
       });
+    this.subscriptions.push(this.speedState);
   }
 
   
@@ -170,6 +175,10 @@ export class GridComponent implements OnInit, AfterViewChecked {
 
   ngAfterViewChecked() {
       this.cdRef.detectChanges();
+  }
+
+  ngOnDestroy(){
+    this.subscriptions.forEach(s => s.unsubscribe());
   }
 
   handleActivationStateChange(square: Square){
@@ -222,6 +231,7 @@ export class GridComponent implements OnInit, AfterViewChecked {
           );
       }
     });
+    this.subscriptions.push(subscribe);
   }
 }
 

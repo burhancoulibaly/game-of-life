@@ -1,8 +1,10 @@
 <div id="menu-container">
     <section class="menu">
         <div class="menu-btns">
-            <button (click)="runStateChanged($event)" class="btn btn-primary">Run</button>
-            <button (click)="pauseStateChanged($event)" class="btn btn-primary">Pause</button>
+            <button *ngIf="menuState.running === false" (click)="runStateChanged($event)" class="btn btn-primary">Run</button>
+            <button *ngIf="menuState.running === true" class="btn btn-primary disabled">Running</button>
+            <button *ngIf="menuState.paused === false" (click)="pauseStateChanged($event)" class="btn btn-primary">Pause</button>
+            <button *ngIf="menuState.paused === true" class="btn btn-primary disabled">Paused</button>
             <button (click)="clearStateChanged($event)" class="btn btn-primary">Clear</button>
         </div>
         <div class="speed-slider">

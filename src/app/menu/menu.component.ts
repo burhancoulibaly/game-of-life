@@ -22,6 +22,8 @@ export class MenuComponent implements OnInit {
   @Output() clearStateChange: EventEmitter<boolean> = new EventEmitter();
   @Output() speedStateChange: EventEmitter<number> = new EventEmitter();
 
+  private subscriptions: Array<any> = new Array();
+
   constructor(private elementRef: ElementRef) { }
 
   ngOnInit(): void {
@@ -36,11 +38,16 @@ export class MenuComponent implements OnInit {
         
         this.menuState.cleared = clearState;
       });
+    this.subscriptions.push(this.gridCleared);
   }
 
   ngAfterViewInit(): void {
     this.menuState.speed = parseInt(this.elementRef.nativeElement.querySelector("#speed").textContent);
     this.speedStateChange.emit(this.menuState.speed);
+  }
+
+  ngOnDestroy(){
+    this.subscriptions.forEach(s => s.unsubscribe());
   }
 
   runStateChanged(e){
