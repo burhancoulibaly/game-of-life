@@ -1,8 +1,8 @@
 <div id="grid-container" #gridContainer>
     <section id="grid" #gridElement>
-        <div *ngFor="let row of grid" class="row">
-            <div *ngFor="let col of row" class="cols">
-                <app-square [square]="col" [isRunning]="menuState.running" (activationStateChange)="handleActivationStateChange($event)"></app-square>
+        <div *ngFor="let row of [].constructor(rows); let j=index" class="row">
+            <div *ngFor="let col of [].constructor(cols); let i=index" class="cols">
+                <app-square [square]="grid[i + (j * cols)]" [isRunning]="menuState.running" (activationStateChange)="handleActivationStateChange($event)"></app-square>
             </div>
         </div>
     </section>

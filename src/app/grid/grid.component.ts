@@ -15,7 +15,8 @@ export class GridComponent implements OnInit, AfterViewChecked {
   onResize(event) {
     const width = this.gridElement.nativeElement.offsetWidth;
     const height = this.gridElement.nativeElement.offsetHeight;
-    const tempGrid = this.grid;
+
+    let tempGrid = this.grid;
     
     this.gridDims = {
       width: width,
@@ -27,36 +28,34 @@ export class GridComponent implements OnInit, AfterViewChecked {
     this.rows = rows;
     this.cols = cols;
 
-    this.grid = Array(rows)
-      .fill(0)
-      .map((row, index) => 
-      Array(cols)
-        .fill({
-          width: this.squareDims.width, 
-          height: this.squareDims.height,  
-          x: null, 
-          y: index,
-          isActive: false
-        }).map((col, index) =>{
-          return {
-            ...col,
-            x: index
-          }
-        })
-      )
+    this.grid = new Array(this.rows * this.cols)
+      .fill({
+        width: this.squareDims.width, 
+        height: this.squareDims.height,  
+        isActive: false
+      })
+      .map((square, i) => {
+        return {
+          ...square,
+          x: i % this.cols, 
+          y: Math.abs((i - (i % this.cols)) / this.cols),
+        }
+      });
+      
 
     this.grid = this.grid
-    .map((row, j) => row
-      .map((col, i) => {
-        if(tempGrid[j] && tempGrid[j][i]){
-          return {
-            ...col,
-            isActive: tempGrid[j][i].isActive
-          }
-        }
-        return col;
-      })
-    );
+      .map((square) => {
+        tempGrid
+          .map((tempSquare) => {
+            if(square.x === tempSquare.x && square.y === tempSquare.y){
+              square = {
+                ...square,
+                isActive: tempSquare.isActive
+              }
+            }
+          })  
+        return { ...square };
+      });
         
     // console.log("Grid Dims: ", this.gridDims);
     // console.log("Square Dims", this.squareDims);
@@ -83,9 +82,9 @@ export class GridComponent implements OnInit, AfterViewChecked {
     height: 15,
   };
   public square: Square;
-  public rows: number;
-  public cols: number;
-  public grid: Array<Array<Square>>;
+  public rows: number = 0;
+  public cols: number = 0;
+  public grid: Array<Square>;
   
 
 
@@ -159,23 +158,19 @@ export class GridComponent implements OnInit, AfterViewChecked {
     this.rows = rows;
     this.cols = cols;
 
-    this.grid = Array(rows)
-      .fill(0)
-      .map((row, index) => 
-      Array(cols)
-        .fill({
-          width: this.squareDims.width, 
-          height: this.squareDims.height,  
-          x: null, 
-          y: index,
-          isActive: false
-        }).map((col, index) =>{
-          return {
-            ...col,
-            x: index
-          }
-        })
-      )
+    this.grid = new Array(this.rows * this.cols)
+      .fill({
+        width: this.squareDims.width, 
+        height: this.squareDims.height,  
+        isActive: false
+      })
+      .map((square, i) => {
+        return {
+          ...square,
+          x: i % this.cols, 
+          y: Math.abs((i - (i % this.cols)) / this.cols),
+        }
+      });
 
     // console.log("Grid Dims: ", this.gridDims);
     // console.log("Square Dims", this.squareDims);
@@ -191,7 +186,8 @@ export class GridComponent implements OnInit, AfterViewChecked {
   }
 
   handleActivationStateChange(square: Square){
-    this.grid[square.y][square.x] = square;
+    // console.log(square)
+    this.grid[getIndex(square.x, square.y, this.cols)] = square;
   }
 
   runAlgorithm(){
@@ -200,44 +196,37 @@ export class GridComponent implements OnInit, AfterViewChecked {
 
     const subscribe = repeat.subscribe(() => {
       if(this.menuState.running && !this.menuState.paused){
-        const tempGrid = Array(this.grid.length)
-                          .fill(0)
-                          .map((row, index) => 
-                          Array(this.grid[index].length)
-                            .fill({
-                              width: this.squareDims.width, 
-                              height: this.squareDims.height,  
-                              x: null, 
-                              y: index,
-                              isActive: false
-                            }).map((col, index) =>{
-                              return {
-                                ...col,
-                                x: index
-                              }
-                            })
-                          )
-
-        for(let j = 0; j < this.grid.length; j++){
-          for(let i = 0; i < this.grid[j].length; i++){
-            tempGrid[j][i].isActive = getGridPointState(i, j, this.grid);
+        const tempGrid = new Array(this.rows * this.cols)
+        .fill({
+          width: this.squareDims.width, 
+          height: this.squareDims.height,  
+          isActive: false
+        })
+        .map((square, i) => {
+          return {
+            ...square,
+            x: i % this.cols, 
+            y: Math.abs((i - (i % this.cols)) / this.cols),
           }
+        });
+
+        for(let i = 0; i < this.grid.length; i++){
+          tempGrid[i].isActive = getGridPointState(i, this.grid, this.cols, this.rows);
         }
 
         // console.log(tempGrid);
 
         this.grid = this.grid
-          .map((row, j) => row
-            .map((col, i) => {
-              if(tempGrid[j] && tempGrid[j][i]){
-                return {
-                  ...col,
-                  isActive: tempGrid[j][i].isActive
-                }
+          .map((square, index) => {
+            if(tempGrid[index]){
+              return {
+                ...square,
+                isActive: tempGrid[index].isActive
               }
-              return col;
-            })
-          );
+            }
+            
+            return { ...square };
+          });
       }
     });
     this.subscriptions.push(subscribe);
@@ -245,9 +234,9 @@ export class GridComponent implements OnInit, AfterViewChecked {
   }
 }
 
-const getGridPointState = (i, j, grid) => {
-  const isAlive = grid[j][i].isActive;
-  const neighbors = getNeighbors(i, j, grid);
+const getGridPointState = (i, grid, cols, rows) => {
+  const isAlive = grid[i].isActive;
+  const neighbors = getNeighbors(grid[i].x, grid[i].y, grid, cols, rows);
   
   let countLiveNeighbors = 0;
 
@@ -274,45 +263,49 @@ const getGridPointState = (i, j, grid) => {
   }
 }
 
-const getNeighbors = (i, j, grid) => {
+const getNeighbors = (x, y, grid, cols, rows) => {
   const neighbors = new Array(8);
 
   //grid[y][j]
 
-  if(grid[j-1] && grid[j-1][i-1]){
-    // console.log(grid[j-1][i-1])
-    neighbors[0] = grid[j-1][i-1].isActive;
+  if(x-1 > 0 && y-1 > 0){
+    // console.log(grid[getIndex(x-1, y-1, cols)])
+    neighbors[0] = grid[getIndex(x-1, y-1, cols)].isActive;
   }
-  if(grid[j-1] && grid[j-1][i]){
-    // console.log(grid[j-1][i])
-    neighbors[1] = grid[j-1][i].isActive;
+  if(y-1 > 0){
+    // console.log(grid[getIndex(x, y-1, cols)])
+    neighbors[1] = grid[getIndex(x, y-1, cols)].isActive;
   }
-  if(grid[j-1] && grid[j-1][i+1]){
-    // console.log(grid[j-1][i+1])
-    neighbors[2] = grid[j-1][i+1].isActive;
+  if(x+1 < cols && y-1 > 0){
+    // console.log(grid[getIndex(x+1, y-1, cols)])
+    neighbors[2] = grid[getIndex(x+1, y-1, cols)].isActive;
   }
-  if(grid[j] && grid[j][i-1]){
-    // console.log(grid[j][i-1])
-    neighbors[3] = grid[j][i-1].isActive;
+  if(x-1 > 0){
+    // console.log(grid[getIndex(x-1, y, cols)])
+    neighbors[3] = grid[getIndex(x-1, y, cols)].isActive;
   }
-  if(grid[j] && grid[j][i+1]){
-    // console.log(grid[j][i+1])
-    neighbors[4] = grid[j][i+1].isActive;
+  if(x+1 < cols){
+    // console.log(grid[getIndex(x+1, y, cols)])
+    neighbors[4] = grid[getIndex(x+1, y, cols)].isActive;
   }
-  if(grid[j+1] && grid[j+1][i-1]){
-    // console.log(grid[j+1][i-1])
-    neighbors[5] = grid[j+1][i-1].isActive;
+  if(x-1 > 0 && y+1 < rows){
+    // console.log(grid[getIndex(x-1, y+1, cols)])
+    neighbors[5] = grid[getIndex(x-1, y+1, cols)].isActive;
   }
-  if(grid[j+1] && grid[j+1][i]){
-    // console.log(grid[j+1][i])
-    neighbors[6] = grid[j+1][i].isActive;
+  if(y+1 < rows){
+    // console.log(grid[getIndex(x, y+1, cols)])
+    neighbors[6] = grid[getIndex(x, y+1, cols)].isActive;
   }
-  if(grid[j+1] && grid[j+1][i+1]){
-    // console.log(grid[j+1][i+1])
-    neighbors[7] = grid[j+1][i+1].isActive;
+  if(x+1 < cols && y+1 < rows){
+    // console.log(grid[getIndex(x+1, y+1, cols)])
+    neighbors[7] = grid[getIndex(x+1, y+1, cols)].isActive;
   }
 
   return neighbors;
+}
+
+const getIndex = (x, y, cols) => {
+  return (x + (y * cols));
 }
 
 const getRowsAndCols = (width, height, squareDims) => {
@@ -326,24 +319,22 @@ const getRowsAndCols = (width, height, squareDims) => {
 }
 
 const clearGrid = (rows, cols, squareDims) => {
-  const grid = Array(rows)
-      .fill(0)
-      .map((row, index) => 
-      Array(cols)
-        .fill({
-          width: squareDims.width, 
-          height: squareDims.height,  
-          x: null, 
-          y: index,
-          isActive: false
-        }).map((col, index) =>{
-          return {
-            ...col,
-            x: index
-          }
-        })
-      )
+  if(rows && cols){
+    const grid = new Array(rows * cols)
+      .fill({
+        width: squareDims.width, 
+        height: squareDims.height,  
+        isActive: false
+      })
+      .map((square, i) => {
+        return {
+          ...square,
+          x: i % cols, 
+          y: Math.abs((i - (i % cols)) / cols),
+        }
+      });
 
-  return grid;
-      
+    return grid;
+  }
+  return
 }
