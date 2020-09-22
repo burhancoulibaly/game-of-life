@@ -14,13 +14,16 @@ export class MenuComponent implements OnInit {
     running: false,
     paused: false,
     cleared: true,
+    generateLife: false,
     speed: 0,
   }
   
   @Input() gridCleared: BehaviorSubject<boolean>;
+  @Input() lifeGenerated: BehaviorSubject<boolean>;
   @Output() runStateChange: EventEmitter<boolean> = new EventEmitter();
   @Output() pauseStateChange: EventEmitter<boolean> = new EventEmitter();
   @Output() clearStateChange: EventEmitter<boolean> = new EventEmitter();
+  @Output() generateLifeStateChange: EventEmitter<boolean> = new EventEmitter();
   @Output() speedStateChange: EventEmitter<number> = new EventEmitter();
 
   private subscriptions: Array<BehaviorSubject<any> | Subscription> = new Array();
@@ -35,12 +38,14 @@ export class MenuComponent implements OnInit {
             ...this.menuState,
             running: false,
             paused: false,
-            cleared: true
+            cleared: true,
+            generateLife: false,
           }
           
           this.runStateChange.emit(this.menuState.running);
           this.pauseStateChange.emit(this.menuState.paused);
           this.clearStateChange.emit(this.menuState.cleared);
+          this.generateLifeStateChange.emit(this.menuState.generateLife);
           this.speedStateChange.emit(this.menuState.speed);
         }
       }
@@ -53,6 +58,7 @@ export class MenuComponent implements OnInit {
     this.runStateChange.emit(this.menuState.running);
     this.pauseStateChange.emit(this.menuState.paused);
     this.clearStateChange.emit(this.menuState.cleared);
+    this.generateLifeStateChange.emit(this.menuState.generateLife);
     this.speedStateChange.emit(this.menuState.speed);
 
     this.gridCleared
@@ -60,6 +66,14 @@ export class MenuComponent implements OnInit {
         // console.log("Grid cleared", clearState);
         
         this.menuState.cleared = clearState;
+      });
+    this.subscriptions.push(this.gridCleared);
+
+    this.lifeGenerated
+      .subscribe((generateLifeState) => {
+        // console.log("Life Generated", generateLifeState);
+        
+        this.menuState.generateLife = generateLifeState;
       });
     this.subscriptions.push(this.gridCleared);
   }
@@ -76,6 +90,7 @@ export class MenuComponent implements OnInit {
   runStateChanged(e){
     this.menuState.running = true;
     this.menuState.paused = false;
+
     this.runStateChange.emit(this.menuState.running);
     this.pauseStateChange.emit(this.menuState.paused);
   }
@@ -84,6 +99,7 @@ export class MenuComponent implements OnInit {
     if(this.menuState.running){
       this.menuState.running = false;
       this.menuState.paused = true;
+
       this.runStateChange.emit(this.menuState.running);
       this.pauseStateChange.emit(this.menuState.paused);      
     }
@@ -93,13 +109,29 @@ export class MenuComponent implements OnInit {
     this.menuState.running = false;
     this.menuState.paused = false;
     this.menuState.cleared = false;
+
     this.runStateChange.emit(this.menuState.running);
     this.pauseStateChange.emit(this.menuState.paused);
     this.clearStateChange.emit(this.menuState.cleared);
   }
 
+  generateLifeTrigger(e){
+    if(!this.menuState.generateLife){
+      this.menuState.running = false;
+      this.menuState.paused = false;
+      this.menuState.generateLife = true;
+
+      this.runStateChange.emit(this.menuState.running);
+      this.pauseStateChange.emit(this.menuState.paused);
+      this.generateLifeStateChange.emit(this.menuState.generateLife);
+    }
+    
+    return;
+  }
+
   speedStateChanged(e){
     this.menuState.speed = e.value;
+
     this.speedStateChange.emit(this.menuState.speed);
   }
 }

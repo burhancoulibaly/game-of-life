@@ -65,8 +65,10 @@ export class GridComponent implements OnInit, AfterViewChecked {
   @Input() runState: BehaviorSubject<boolean>;
   @Input() pauseState: BehaviorSubject<boolean>;
   @Input() clearState: BehaviorSubject<boolean>;
+  @Input() generateLifeState: BehaviorSubject<boolean>;
   @Input() speedState: BehaviorSubject<number>;
   @Output() gridCleared: EventEmitter<boolean> = new EventEmitter();
+  @Output() lifeGenerated: EventEmitter<boolean> = new EventEmitter();
 
   private subscriptions: Array<BehaviorSubject<any> | Subscription> = new Array();
   private speedSubscription: Subscription;
@@ -74,6 +76,7 @@ export class GridComponent implements OnInit, AfterViewChecked {
     running: null,
     paused: null,
     cleared: null,
+    generateLife: null,
     speed: null,
   }
   public gridDims: GridDims;
@@ -114,19 +117,34 @@ export class GridComponent implements OnInit, AfterViewChecked {
     this.subscriptions.push(this.pauseState);
     
     this.clearState
-      .subscribe((clearState) => {
-        // console.log("cleared", clearState);
+      .subscribe(async(clearState) => {
+        // console.log("Clearing grid", clearState);
         
         this.menuState.cleared = clearState;
 
         if(!this.menuState.cleared){
-          this.grid = clearGrid(this.rows, this.cols, this.squareDims);
+          await this.clearGrid();
           this.menuState.cleared = true;
 
           this.gridCleared.emit(this.menuState.cleared);
         }
       });
     this.subscriptions.push(this.clearState);
+
+    this.generateLifeState
+      .subscribe(async(generateLifeState) => {
+        // console.log("Generating life", generateLifeState);
+
+        this.menuState.generateLife = generateLifeState;
+
+        if(this.menuState.generateLife){
+          await this.generateRandomLife();
+          this.menuState.generateLife = false;
+
+          this.lifeGenerated.emit(this.menuState.generateLife);
+        }
+      });
+    this.subscriptions.push(this.generateLifeState);
 
     this.speedState
       .subscribe((speedState) => {
@@ -190,6 +208,22 @@ export class GridComponent implements OnInit, AfterViewChecked {
     this.grid[getIndex(square.x, square.y, this.cols)] = square;
   }
 
+  generateRandomLife(){
+    const randomInts = new Array(this.rows * this.cols)
+      .fill(0)
+      .map((randomInt) => {
+        return getRandomInt() === 1 ? true : false;
+      });
+
+    this.grid = this.grid
+      .map((square, index) => {
+        return {
+          ...square,
+          isActive: randomInts[index]
+        }
+      });
+  }
+
   runAlgorithm(){
     // console.log(500 / this.menuState.speed)
     const repeat = timer(0 / this.menuState.speed, 500 / this.menuState.speed);
@@ -232,6 +266,32 @@ export class GridComponent implements OnInit, AfterViewChecked {
     this.subscriptions.push(subscribe);
     this.speedSubscription = subscribe;
   }
+
+  clearGrid(){
+    if(this.rows && this.cols){
+      this.grid = new Array(this.rows * this.cols)
+        .fill({
+          width: this.squareDims.width, 
+          height: this.squareDims.height,  
+          isActive: false
+        })
+        .map((square, i) => {
+          return {
+            ...square,
+            x: i % this.cols, 
+            y: Math.abs((i - (i % this.cols)) / this.cols),
+          }
+        });
+
+      return;
+    }
+  }
+}
+
+const getRandomInt = () => {
+  const randomInt = Math.round(Math.random());
+
+  return randomInt;
 }
 
 const getGridPointState = (i, grid, cols, rows) => {
@@ -316,25 +376,4 @@ const getRowsAndCols = (width, height, squareDims) => {
     rows: rows,
     cols: cols
   }
-}
-
-const clearGrid = (rows, cols, squareDims) => {
-  if(rows && cols){
-    const grid = new Array(rows * cols)
-      .fill({
-        width: squareDims.width, 
-        height: squareDims.height,  
-        isActive: false
-      })
-      .map((square, i) => {
-        return {
-          ...square,
-          x: i % cols, 
-          y: Math.abs((i - (i % cols)) / cols),
-        }
-      });
-
-    return grid;
-  }
-  return
 }

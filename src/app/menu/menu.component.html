@@ -7,6 +7,10 @@
             <button *ngIf="menuState.paused === true" class="btn btn-primary disabled">Paused</button>
             <button (click)="clearStateChanged($event)" class="btn btn-primary">Clear</button>
         </div>
+        <div class="randomLifeGenBtn">
+            <button *ngIf="menuState.generateLife === false" (click)="generateLifeTrigger($event)" class="btn btn-primary">Generate Random Life</button>
+            <button *ngIf="menuState.generateLife === true" (click)="generateLifeTrigger($event)" class="btn btn-primary disabled">Generating Life</button>
+        </div>
         <div class="speed-slider">
             <label for="speed">Speed</label>
             <mat-slider id="speed" min="1" max="5" step="1" value="3" (change)="speedStateChanged($event)"></mat-slider>

@@ -3,14 +3,18 @@
         [runState]="runState" 
         [pauseState]="pauseState" 
         [clearState]="clearState"
+        [generateLifeState]="generateLifeState"
         [speedState]="speedState"
         (gridCleared)="handleGridCleared($event)"
+        (lifeGenerated)="handleLifeGenerated($event)"
     ></app-grid>
     <app-menu
         [gridCleared]="clearState"
+        [lifeGenerated]="generateLifeState"
         (runStateChange)="handleRunStateChange($event)" 
         (pauseStateChange)="handlePauseStateChange($event)" 
         (clearStateChange)="handleClearStateChange($event)" 
+        (generateLifeStateChange)="handleGenerateLifeStateChange($event)" 
         (speedStateChange)="handleSpeedStateChange($event)"
     ></app-menu>
 </div>

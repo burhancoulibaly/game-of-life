@@ -12,12 +12,14 @@ export class SandboxComponent implements OnInit {
     running: null,
     paused: null,
     cleared: null,
+    generateLife: null,
     speed: null,
   }
 
   public runState: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(this.menuState.running);
   public pauseState: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(this.menuState.paused);
   public clearState: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(this.menuState.cleared);
+  public generateLifeState: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(this.menuState.generateLife);
   public speedState: BehaviorSubject<number> = new BehaviorSubject<number>(this.menuState.speed);
 
   constructor() { }
@@ -45,9 +47,19 @@ export class SandboxComponent implements OnInit {
     this.speedStateChanged();
   }
 
+  handleGenerateLifeStateChange(generateLifeState){
+    this.menuState.generateLife = generateLifeState;
+    this.generateLifeStateChanged();
+  }
+
   handleGridCleared(clearState){
     this.menuState.cleared = clearState;
     this.clearStateChanged();
+  }
+
+  handleLifeGenerated(lifeGeneratedState){
+    this.menuState.generateLife = lifeGeneratedState;
+    this.generateLifeStateChanged();
   }
 
   runStateChanged(){
@@ -62,6 +74,11 @@ export class SandboxComponent implements OnInit {
 
   clearStateChanged(){
     this.clearState.next(this.menuState.cleared);
+    return; 
+  }
+
+  generateLifeStateChanged(){
+    this.generateLifeState.next(this.menuState.generateLife);
     return; 
   }
 
