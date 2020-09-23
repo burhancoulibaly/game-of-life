@@ -66,3 +66,28 @@
     width: 100%;
 }
 
+@media (max-height: 1170px) {
+    #menu-container .menu .menu-btns-2{
+        width: 100%;
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+        padding: 0 1rem;
+    }
+
+    #menu-container .menu{
+        /* border: 3px solid black; */
+        width: 50%;
+        height: 85%;
+        min-width: 255px;
+        min-height: 175px;
+    }
+
+    #menu-container .menu .randomLifeGenBtn{
+        margin: 0rem .5rem;
+    }
+
+    #menu-container .menu .speed-slider{
+        padding: 0;
+    }
+}
