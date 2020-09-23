@@ -328,39 +328,102 @@ const getNeighbors = (x, y, grid, cols, rows) => {
 
   //grid[y][j]
 
-  if(x-1 > 0 && y-1 > 0){
-    // console.log(grid[getIndex(x-1, y-1, cols)])
-    neighbors[0] = grid[getIndex(x-1, y-1, cols)].isActive;
-  }
-  if(y-1 > 0){
-    // console.log(grid[getIndex(x, y-1, cols)])
-    neighbors[1] = grid[getIndex(x, y-1, cols)].isActive;
-  }
-  if(x+1 < cols && y-1 > 0){
-    // console.log(grid[getIndex(x+1, y-1, cols)])
-    neighbors[2] = grid[getIndex(x+1, y-1, cols)].isActive;
-  }
-  if(x-1 > 0){
-    // console.log(grid[getIndex(x-1, y, cols)])
-    neighbors[3] = grid[getIndex(x-1, y, cols)].isActive;
-  }
-  if(x+1 < cols){
-    // console.log(grid[getIndex(x+1, y, cols)])
-    neighbors[4] = grid[getIndex(x+1, y, cols)].isActive;
-  }
-  if(x-1 > 0 && y+1 < rows){
-    // console.log(grid[getIndex(x-1, y+1, cols)])
-    neighbors[5] = grid[getIndex(x-1, y+1, cols)].isActive;
-  }
-  if(y+1 < rows){
-    // console.log(grid[getIndex(x, y+1, cols)])
-    neighbors[6] = grid[getIndex(x, y+1, cols)].isActive;
-  }
-  if(x+1 < cols && y+1 < rows){
-    // console.log(grid[getIndex(x+1, y+1, cols)])
-    neighbors[7] = grid[getIndex(x+1, y+1, cols)].isActive;
+  // console.log(x, y);
+
+  if(!neighbors[0]){
+    if(x-1 < 0 || y-1 < 0){
+      if(x-1 < 0 && y-1 > -1){
+        neighbors[0] = grid[getIndex(cols-1, y-1, cols)].isActive;
+      }else if(x-1 > -1 && y-1 < 0){
+        neighbors[0] = grid[getIndex(x-1, rows-1, cols)].isActive;
+      }else if(x-1 < 0 && y-1 < 0){
+        neighbors[0] = grid[getIndex(cols-1, rows-1, cols)].isActive;
+      }
+    }else if(x-1 > -1 && y-1 > -1){
+      neighbors[0] = grid[getIndex(x-1, y-1, cols)].isActive;
+    }
   }
 
+  if(!neighbors[1]){
+    if(y-1 < 0){
+      neighbors[1] = grid[getIndex(x, rows-1, cols)].isActive;
+    }else if(y-1 > -1){
+      neighbors[1] = grid[getIndex(x, y-1, cols)].isActive;
+    }
+  }
+
+  if(!neighbors[2]){
+    if(x+1 >= cols || y-1 < 0){
+      if(x+1 >= cols && y-1 > -1){
+        neighbors[2] = grid[getIndex(0, y-1, cols)].isActive;
+      }else if(x+1 < cols && y-1 < 0){
+        neighbors[2] = grid[getIndex(x+1, rows-1, cols)].isActive;
+      }else if(x+1 >= cols && y-1 < 0){
+        neighbors[2] = grid[getIndex(0, rows-1, cols)].isActive;
+      }
+    }else if(x+1 < cols && y-1 > -1){
+      neighbors[2] = grid[getIndex(x+1, y-1, cols)].isActive;
+    }
+  }
+  
+
+  if(!neighbors[3]){
+    if(x-1 < 0){
+      neighbors[3] = grid[getIndex(cols-1, y, cols)].isActive;
+    }else if(x-1 > -1){
+      neighbors[3] = grid[getIndex(x-1, y, cols)].isActive;
+    }
+  }
+  
+
+  if(!neighbors[4]){
+    if(x+1 >= cols){
+      neighbors[4] = grid[getIndex(0, y, cols)].isActive;
+    }else if(x+1 < cols){
+      neighbors[4] = grid[getIndex(x+1, y, cols)].isActive;
+    }
+  }
+  
+
+  if(!neighbors[5]){
+    if(x-1 < 0 || y+1 >= rows){
+      if(x-1 < 0 && y+1 < rows){
+        neighbors[5] = grid[getIndex(cols-1, y+1, cols)].isActive;
+      }else if(x-1 > -1 && y+1 >= rows){
+        neighbors[5] = grid[getIndex(x-1, 0, cols)].isActive;
+      }else if(x-1 < 0 && y+1 >= rows){
+        neighbors[5] = grid[getIndex(cols-1, 0, cols)].isActive;
+      }
+    }else if(x-1 > -1 && y+1 < rows){
+      neighbors[5] = grid[getIndex(x-1, y+1, cols)].isActive;
+    }
+  }
+  
+
+  if(!neighbors[6]){
+    if(y+1 >= rows){
+      neighbors[6] = grid[getIndex(x, 0, cols)].isActive;
+    }else if(y+1 < rows){
+      neighbors[6] = grid[getIndex(x, y+1, cols)].isActive;
+    }
+  }
+  
+
+  if(!neighbors[7]){
+    if(x+1 >= cols || y+1 >= rows){
+      if(x+1 >= cols && y+1 < rows){
+        neighbors[7] = grid[getIndex(0, y+1, cols)].isActive;
+      }else if(x+1 < cols && y+1 >= rows){
+        neighbors[7] = grid[getIndex(x+1, 0, cols)].isActive;
+      }else if(x+1 >= cols && y+1 >= rows){
+        neighbors[7] = grid[getIndex(0, 0, cols)].isActive;
+      }
+    }else if(x+1 < cols && y+1 < rows){
+      neighbors[7] = grid[getIndex(x+1, y+1, cols)].isActive;
+    }
+  }
+
+  // console.log(neighbors)
   return neighbors;
 }
 
